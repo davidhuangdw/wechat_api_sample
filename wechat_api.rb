@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'typhoeus'
+require 'rack'
 require 'active_support/core_ext/object'
 require 'active_support/all'
 require_relative 'exceptions'
@@ -72,8 +73,9 @@ class WechatApi
 
   def add_news(token, articles)
     url = 'https://api.weixin.qq.com/cgi-bin/material/add_news'
-    body = {access_token:token, articles:Array(articles)}
-    resp = Typhoeus.post(url, body: body)
+    params = {access_token: token}
+    body = {access_token:token, articles:articles}.to_json       # have to using json string!!
+    resp = Typhoeus.post(url, params: params, body: body)
     raise RequestError if resp.code != 200
 
     JSON.parse(resp.body)
@@ -81,8 +83,32 @@ class WechatApi
 
   def create_menu(token, buttons)
     url = 'https://api.weixin.qq.com/cgi-bin/menu/create'
-    body = {access_token:token, button:Array(buttons)}
-    resp = Typhoeus.post(url, body: body)
+    params = {access_token: token}
+    body = {access_token:token, button:buttons}.to_json
+    resp = Typhoeus.post(url, params: params, body: body)
+    raise RequestError if resp.code != 200
+
+    JSON.parse(resp.body)
+  end
+
+  def upload_news(token, articles)
+    url = 'https://api.weixin.qq.com/cgi-bin/media/uploadnews'
+    params = {access_token: token}
+    body = {access_token:token, articles:articles}.to_json       # have to using json string!!
+    resp = Typhoeus.post(url, params: params, body: body)
+    raise RequestError if resp.code != 200
+
+    JSON.parse(resp.body)
+  end
+
+  def send_news(token, news_media_id, users_openids)
+    url = 'https://api.weixin.qq.com/cgi-bin/message/mass/send'
+    params = {access_token: token}
+    body ={to_user:users_openids,
+           mpnews:{media_id: news_media_id},
+           msgtype:'mpnews'
+    }.to_json
+    resp = Typhoeus.post(url, params: params, body: body)
     raise RequestError if resp.code != 200
 
     JSON.parse(resp.body)

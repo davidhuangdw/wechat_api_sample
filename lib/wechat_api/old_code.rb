@@ -1,11 +1,10 @@
 # encoding: utf-8
 require 'typhoeus'
 require 'rack'
-require 'active_support/core_ext/object'
 require 'active_support/all'
 require_relative 'exceptions'
 
-class WechatApi
+class OldCode
   def get_token(app_id, secret)
     params = {grant_type:'client_credential',
               appid: app_id,
@@ -33,7 +32,39 @@ class WechatApi
     resp = Typhoeus.get(url, params: params)
     raise RequestError if resp.code != 200
 
+    p resp.body
     JSON.parse(resp.body)['groups']
+  end
+
+  def create_group(token, group_name)
+    url = 'https://api.weixin.qq.com/cgi-bin/groups/create'
+    params = {access_token: token}
+    body = {group:{name:group_name}}.to_json
+    resp = Typhoeus.post(url, params: params, body: body)
+    raise RequestError if resp.code != 200
+
+    JSON.parse(resp.body)
+  end
+
+  def get_group_id(token, user_id)
+    url = 'https://api.weixin.qq.com/cgi-bin/groups/getid'
+    params = {access_token: token}
+    body = {openid: user_id}.to_json
+    resp = Typhoeus.post(url, params: params, body: body)
+    raise RequestError if resp.code != 200
+
+    JSON.parse(resp.body)
+  end
+
+  def change_group(token, user_id, group_id)
+    url = 'https://api.weixin.qq.com/cgi-bin/groups/members/update'
+    params = {access_token: token}
+    body = {openid: user_id, to_groupid: group_id}.to_json
+    resp = Typhoeus.post(url, params: params, body: body)
+    raise RequestError if resp.code != 200
+
+    JSON.parse(resp.body)
+
   end
 
   def get_user_openids(token, next_openid=nil)
@@ -71,10 +102,17 @@ class WechatApi
     JSON.parse(resp.body)
   end
 
+  def get_materials(token, body_hash)
+    url = 'https://api.weixin.qq.com/cgi-bin/material/batchget_material'
+    params = {access_token: token}
+    validate_required_fields(body_hash, :type, :offset, :count)
+    resp_of_post(url:url, params:params, body: body_hash.to_json)
+  end
+
   def add_news(token, articles)
     url = 'https://api.weixin.qq.com/cgi-bin/material/add_news'
     params = {access_token: token}
-    body = {access_token:token, articles:articles}.to_json       # have to using json string!!
+    body = {articles:articles}.to_json       # have to using json string!!
     resp = Typhoeus.post(url, params: params, body: body)
     raise RequestError if resp.code != 200
 
@@ -104,7 +142,7 @@ class WechatApi
   def send_news(token, news_media_id, users_openids)
     url = 'https://api.weixin.qq.com/cgi-bin/message/mass/send'
     params = {access_token: token}
-    body ={to_user:users_openids,
+    body ={touser:users_openids,
            mpnews:{media_id: news_media_id},
            msgtype:'mpnews'
     }.to_json
@@ -113,6 +151,64 @@ class WechatApi
 
     JSON.parse(resp.body)
   end
+
+  def send_news_to_group(token, media_id, group_id)
+    url = 'https://api.weixin.qq.com/cgi-bin/message/mass/sendall'
+    params = {access_token: token}
+    body ={filter:{
+              is_to_all: false,
+              group_id: group_id,
+           },
+           mpnews:{media_id: media_id},
+           msgtype:'mpnews'
+    }.to_json
+    resp = Typhoeus.post(url, params: params, body: body)
+    raise RequestError if resp.code != 200
+
+    JSON.parse(resp.body)
+  end
+
+  def reply_to_customer(token, openid, media)
+    url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send'
+    params = {access_token: token}
+    body = media.merge(touser: openid).to_json
+    resp_of_post(url:url, params:params, body: body)
+  end
+
+  def get_replies(token, body_hash)
+    url = 'https://api.weixin.qq.com/customservice/msgrecord/getrecord'
+    params = {access_token: token}
+    validate_required_fields(body_hash, :endtime, :pageindex, :pagesize, :starttime)
+    resp_of_post(url:url, params:params, body: body_hash.to_json)
+  end
+
+
+
+
+
+  private
+  def resp_of_post(info={})
+    validate_required_fields(info, :url, :params, :body)
+    resp = Typhoeus.post(info[:url], params: info[:params], body: info[:body])
+    raise RequestError if resp.code != 200
+
+    resp = JSON.parse(resp.body)
+    key_path = info[:key_path] || []
+    value_for_key_path(resp, key_path)
+  end
+
+  def value_for_key_path(hash, key_path)
+    res = hash
+    key_path.each{|k| res=res[k]}
+    res
+  end
+
+  def validate_required_fields(info, *fields)
+    fields.each do |f|
+      raise "required field '#{f}' does not existed" unless info[f.to_sym].present?
+    end
+  end
+
 end
 
 

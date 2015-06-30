@@ -20,6 +20,11 @@ image_media_id = 'zWeOHuOIajY8lFR_KKoI1LyCSG1W8muvmZsuRwf4JKE'
 media = {msgtype: 'image', image: {media_id: image_media_id}}
 p x.send_peer_msg(token, openid, media)
 
+### voice to peer:
+voice_media_id = 'I0k1bX-pXP8BKKc2QA7Bm6gzqIVrlQQ2jkIFbJfWhuA'
+media = {msgtype: 'voice', voice: {media_id: voice_media_id}}
+p x.send_peer_msg(token, openid, media)
+
 ### news to peer:
 pic_url = 'http://img.boqiicdn.com/Data/BK/A/1407/25/img26201406265643_y.jpg'
 pic_url2 = 'http://image6.huangye88.cn/2013/04/02/6e68a072f56c48f8.jpg'

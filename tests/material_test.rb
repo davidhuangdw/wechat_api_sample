@@ -31,6 +31,14 @@ body = {
 p x.add_permanent_material(token, body)
 p last_material('image')
 
+### add voice:
+body = {
+    type: 'voice',
+    media: File.open('medias/voice_speed.mp3')
+}
+p x.add_permanent_material(token, body)
+p last_material('voice')
+
 ### add news:
 image_media_id = 'zWeOHuOIajY8lFR_KKoI1LyCSG1W8muvmZsuRwf4JKE'
 articles = [{
@@ -46,4 +54,8 @@ body_hash = {articles:articles}
 p x.add_permanent_news(token, body_hash)
 p last_material('news')
 
-
+### download voice/image media:
+voice_media_id = 'I0k1bX-pXP8BKKc2QA7Bm6gzqIVrlQQ2jkIFbJfWhuA'
+image_media_id = 'zWeOHuOIajY8lFR_KKoI1LyCSG1W8muvmZsuRwf4JKE'
+p x.download_voice_or_img(token, voice_media_id, 'downloads/voice.mp3')
+p x.download_voice_or_img(token, image_media_id, 'downloads/img.png')

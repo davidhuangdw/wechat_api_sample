@@ -23,7 +23,9 @@ end
 
 
 
+warming_skip_count = 10
 interval = 10.seconds
+
 host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
 srm_conn = WechatSrmConnector.new(host)
 loop do
@@ -31,9 +33,14 @@ loop do
   report = report_str(result)
 
   puts report
-  # msg_time = result[:msg][:CreateTime]
-  # log = logfile(msg_time)
-  # log.write(report)
+  if warming_skip_count > 0
+    warming_skip_count -= 1
+    puts "#{warming_skip_count} remain to skip writing log"
+  else
+    msg_time = result[:msg][:CreateTime]
+    log = logfile(msg_time)
+    log.write(report)
+  end
 
   sleep interval
 end

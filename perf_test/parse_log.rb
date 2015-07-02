@@ -36,11 +36,22 @@ class Summary
   end
 
   def msg_ids
-    records = metrics['200']
-    records.map{|r| r[:msg_id]}.join("\n")
+    sorted_records.join("\n")
+  end
+
+  def msg_count_commands
+    min_id = sorted_records.first
+    max_id = sorted_records.last
+    "command: msg_count(#{min_id}, #{max_id})"
   end
 
   private
+  def count_summary
+    metrics.map do |code, records|
+      "resp_code: #{code}\t\tcount: #{records.count}"
+    end.join("\n")
+  end
+
   def latency_summary
     lines = []
 
@@ -59,11 +70,6 @@ class Summary
     records.sort_by{|r| r[:latency]}[SKIP_EXTREME_NUM...-SKIP_EXTREME_NUM]
   end
 
-  def count_summary
-    metrics.map do |code, records|
-      "resp_code: #{code}\t\tcount: #{records.count}"
-    end.join("\n")
-  end
 
   def latency_detail(record)
     msg_id = record[:msg_id]
@@ -83,6 +89,12 @@ class Summary
     deltas = values.map{|v| (v-avg).abs}
     average(deltas)
   end
+
+  def sorted_records
+    records = metrics['200']
+    @sorted_records ||= records.map{|r| r[:msg_id].to_i}.sort
+  end
+
 end
 
 # time_str = Time.now.strftime('%m-%d-%I-%M-%S')
@@ -95,4 +107,4 @@ metrics = Parser.new.parse_log_files(log_files)
 summary = Summary.new(metrics)
 
 File.write(overview_log_file, summary.overview)
-File.write(ids_log_file, summary.msg_ids)
+File.write(ids_log_file, summary.msg_count_commands+summary.msg_ids)

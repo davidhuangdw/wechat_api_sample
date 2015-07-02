@@ -1,4 +1,5 @@
 require 'active_support/all'
+SKIP_EXTREME_NUM = 5
 
 class Parser
   def parse_log_files(files)
@@ -41,19 +42,23 @@ class Summary
 
   private
   def latency_summary
-    by_latency = proc{|h| h[:latency]}
     lines = []
 
-    records = metrics['200']
-    lines << "max latentcy:\t" + latency_detail(records.max_by(&by_latency))
-    lines << "min latentcy:\t" + latency_detail(records.min_by(&by_latency))
-    latencies = records.map(&by_latency)
+    records = after_sort_and_skip(metrics['200'])
+    lines << "max latentcy:\t" + latency_detail(records[-1])
+    lines << "min latentcy:\t" + latency_detail(records[0])
+    latencies = records.map{|r| r[:latency]}
     avg = average(latencies)
     vari = variation(latencies, avg)
     lines << "average:\t #{avg}"
     lines << "variation:\t #{vari}"
     lines.join("\n")
   end
+
+  def after_sort_and_skip(records)
+    records.sort_by{|r| r[:latency]}[SKIP_EXTREME_NUM...-SKIP_EXTREME_NUM]
+  end
+
   def count_summary
     metrics.map do |code, records|
       "resp_code: #{code}\t\tcount: #{records.count}"

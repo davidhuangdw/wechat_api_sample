@@ -36,13 +36,13 @@ class Summary
   end
 
   def msg_ids
-    sorted_records.join("\n")
+    sorted_msg_ids.join("\n")
   end
 
   def msg_count_commands
-    min_id = sorted_records.first
-    max_id = sorted_records.last
-    "command: msg_count(#{min_id}, #{max_id})"
+    min_id = sorted_msg_ids.first
+    max_id = sorted_msg_ids.last
+    "command: msg_count(#{min_id}, #{max_id})\n"
   end
 
   private
@@ -55,7 +55,7 @@ class Summary
   def latency_summary
     lines = []
 
-    records = after_sort_and_skip(metrics['200'])
+    records = after_sort_and_skip
     lines << "max latentcy:\t" + latency_detail(records[-1])
     lines << "min latentcy:\t" + latency_detail(records[0])
     latencies = records.map{|r| r[:latency]}
@@ -66,8 +66,8 @@ class Summary
     lines.join("\n")
   end
 
-  def after_sort_and_skip(records)
-    records.sort_by{|r| r[:latency]}[SKIP_EXTREME_NUM...-SKIP_EXTREME_NUM]
+  def after_sort_and_skip
+    sorted_records[SKIP_EXTREME_NUM...-SKIP_EXTREME_NUM]
   end
 
 
@@ -92,7 +92,11 @@ class Summary
 
   def sorted_records
     records = metrics['200']
-    @sorted_records ||= records.map{|r| r[:msg_id].to_i}.sort
+    @sorted_records ||= records.sort_by{|r| r[:msg_id].to_i}
+  end
+
+  def sorted_msg_ids
+    @sorted_msg_ids ||= sorted_records.map{|r| r[:msg_id]}
   end
 
 end

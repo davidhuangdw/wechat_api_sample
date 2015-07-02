@@ -24,14 +24,16 @@ end
 
 
 interval = 10.seconds
-srm_conn = WechatSrmConnector.new
+host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
+srm_conn = WechatSrmConnector.new(host)
 loop do
   result = srm_conn.push_msg
   report = report_str(result)
 
-  msg_time = result[:msg][:CreateTime]
-  log = logfile(msg_time)
-  log.write(report)
+  puts report
+  # msg_time = result[:msg][:CreateTime]
+  # log = logfile(msg_time)
+  # log.write(report)
 
   sleep interval
 end

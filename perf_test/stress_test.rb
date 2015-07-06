@@ -41,15 +41,13 @@ end
 # srm_conn = WechatSrmConnector.new(host)
 # warmup(srm_conn)
 
-def stress_test(req_count, thread_count)
-  host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
+def stress_test(req_count, thread_count, host)
   per_count = req_count/thread_count
   reports = thread_count.times.map{[]}
 
   threads = thread_count.times.map do |i|
     Thread.new do
-      # srm_conn = WechatSrmConnector.new(host)
-      srm_conn = WechatSrmConnector.new
+      srm_conn = WechatSrmConnector.new(host)
       per_count.times.map do |j|
         srm_conn.run do
           result = push_msg
@@ -76,11 +74,13 @@ def stress_test(req_count, thread_count)
   res << Summary.new(metrics).overview << "\n"
 end
 
+# host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
+host = 'http://srm-connector.jwang.dev.cloud.vitrue.com'
 time = Time.now
 (30..100).step(10) do |thread_count|
   req_count = thread_count*20
   logfile = "tmp/stress_#{thread_count}_#{req_count}_#{time.to_i}.txt"
-  res = stress_test(req_count, thread_count)
+  res = stress_test(req_count, thread_count, host)
   puts res
   File.write(logfile, res)
 end

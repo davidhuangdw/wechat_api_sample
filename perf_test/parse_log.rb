@@ -32,11 +32,11 @@ class Summary
   end
 
   def overview
-    [count_summary, latency_summary].join("\n")
+    count_summary + latency_summary
   end
 
   def msg_ids
-    sorted_msg_ids.join("\n")
+    sorted_msg_ids.join("\n")+"\n"
   end
 
   def msg_count_commands
@@ -47,27 +47,29 @@ class Summary
 
   private
   def count_summary
+    lines = ''
     metrics.map do |code, records|
-      "resp_code: #{code}\t\tcount: #{records.count}"
-    end.join("\n")
+      lines << "resp_code: #{code}\t\tcount: #{records.count}\n"
+    end
+    lines
   end
 
   def latency_summary
-    lines = []
+    lines = ""
 
     records = after_sort_and_skip
-    lines << "max latentcy:\t" + latency_detail(records[-1])
-    lines << "min latentcy:\t" + latency_detail(records[0])
+    lines << "max latentcy:\t" + latency_detail(records[-1]) << "\n"
+    lines << "min latentcy:\t" + latency_detail(records[0]) << "\n"
     latencies = records.map{|r| r[:latency]}
     avg = average(latencies)
     vari = variation(latencies, avg)
-    lines << "average:\t #{avg}"
-    lines << "variation:\t #{vari}"
-    lines.join("\n")
+    lines << "average:\t #{avg}\n"
+    lines << "variation:\t #{vari}\n"
   end
 
   def after_sort_and_skip
-    sorted_records[SKIP_EXTREME_NUM...-SKIP_EXTREME_NUM]
+    records = metrics['200']
+    records.sort_by{|r| r[:latency]}[SKIP_EXTREME_NUM...-SKIP_EXTREME_NUM]
   end
 
 

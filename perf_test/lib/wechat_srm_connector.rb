@@ -9,6 +9,10 @@ class WechatSrmConnector
     @host, @network = host, 'wechat'
   end
 
+  def run(&blk)
+    instance_eval(&blk)
+  end
+
   def add_resource
   end
 
@@ -38,7 +42,7 @@ class WechatSrmConnector
   def generate_msg(content='blank content')
     # msg_id = next_msg_id
     create_time = Time.now
-    msg_id = create_time.to_i
+    msg_id = (create_time.to_f*1000_000).to_i
     openid = 'oYybev9mXy3IVa_XcPqut8YPUM8k'
     publisher_openid = 'gh_7d9495d344c6'
     {
@@ -49,6 +53,15 @@ class WechatSrmConnector
         ToUserName: publisher_openid,
         Content: "#{msg_id} : #{Time.at(create_time)} : #{content}",
     }
+  end
+
+  def report_str(res)
+    rpt = '-'*70
+    rpt << "\nresp_code: #{res[:resp].code}"
+    rpt << "\nmsg_id: #{res[:msg][:MsgId]}"
+    rpt << "\nmsg: #{res[:msg]}"
+    rpt << "\nlatency: #{res[:timing]}"
+    rpt
   end
 
   private

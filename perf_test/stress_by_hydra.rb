@@ -55,9 +55,9 @@ def stress_test(req_count, thread_count, host)
   res << Summary.new(metrics).overview << "\n"
 end
 
-# host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
+host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
 
-host = 'http://srm-connector.jwang.dev.cloud.vitrue.com'
+# host = 'http://srm-connector.jwang.dev.cloud.vitrue.com'
 time = Time.now
 (5..80).step(5) do |thread_count|
   req_count = thread_count*20

@@ -19,9 +19,11 @@ end
 
 
 type, file_num = ARGV
-type ||= 'thread'
+type ||= 'hydra'
 file_num ||= 10
-files = `ls -t tmp/stress_#{type}* | head -#{file_num}`.split("\n")
+files = `ls -t tmp/stress_#{type}* | head -#{file_num} | sort -n`.split("\n")
+
+puts files
 
 res = ''
 keys = %w[thread_num total_time throughput req_count fail_req_count avg_latency]

@@ -31,8 +31,8 @@ f = File.new(file, 'w')
 f.write(cmds.join("\n"))
 
 timing =  Benchmark.measure do
-  # todo: how to xargs
-  ``
+  # todo: how to escape in shell commands
+  `cat #{file} | xargs -I CMD bash -c "CMD"` # cannot escape
 end
 puts timing
 

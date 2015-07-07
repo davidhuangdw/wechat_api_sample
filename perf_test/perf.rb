@@ -1,12 +1,11 @@
 require_relative 'lib/wechat_srm_connector'
 require_relative 'lib/util'
 
-warming_skip_count = 0
+warming_skip_count = 10
 interval = 10.seconds
 
 host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
 srm_conn = WechatSrmConnector.new(host)
-srm_conn = WechatSrmConnector.new
 loop do
   result = srm_conn.push_msg
   report = srm_conn.report_str(result)

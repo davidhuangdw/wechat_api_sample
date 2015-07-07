@@ -4,8 +4,7 @@ require 'benchmark'
 
 class WechatSrmConnector
   attr_reader :host
-  def initialize(host=nil)
-    host ||= 'http://srm-connector.jwang.dev.cloud.vitrue.com/'
+  def initialize(host)
     @host, @network = host, 'wechat'
   end
 
@@ -33,6 +32,7 @@ class WechatSrmConnector
     body = {xml:msg}.to_json
 
     resp = nil
+    return yield(msg:msg, url:url, params:params, body:body) if block_given?
     timing = Benchmark.measure do
       resp = Typhoeus.post(url, params:params, body:body)
     end

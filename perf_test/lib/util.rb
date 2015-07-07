@@ -15,5 +15,16 @@ class Util
     def last_word(str)
       str.split(/[\s()]+/).reject(&:blank?).last
     end
+
+    def warmup(srm_conn, warmup_count=2)
+      warmup_count.times do |i|
+        srm_conn.run do
+          result = push_msg
+          report = report_str(result)
+          puts report
+          puts "warming up remain: #{warmup_count-1-i}."
+        end
+      end
+    end
   end
 end

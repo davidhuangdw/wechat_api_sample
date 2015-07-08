@@ -42,6 +42,7 @@ end
 
 interval = 1.seconds
 req_count = 30
+logfile_period = 6.hours
 
 host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
 srm_conn = WechatSrmConnector.new(host)
@@ -56,7 +57,7 @@ loop do
     warmup_round -= 1
   else
     puts 'writing'
-    log = Util.logfile(Time.now)
+    log = Util.logfile(Time.now, logfile_period)
     reports.each{|r| log.write(r)}
   end
 

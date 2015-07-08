@@ -60,7 +60,7 @@ class WechatSrmConnector
     rpt << "\nresp_code: #{res[:resp].code}"
     rpt << "\nmsg_id: #{res[:msg][:MsgId]}"
     rpt << "\nmsg: #{res[:msg]}"
-    rpt << "\nlatency: #{res[:timing]}"
+    rpt << "\nlatency: #{res[:timing]}" << "\n"
     rpt
   end
 

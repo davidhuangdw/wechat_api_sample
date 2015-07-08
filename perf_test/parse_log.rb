@@ -7,7 +7,7 @@ time_str = ''
 overview_log_file = "tmp/overview_#{time_str}.txt"
 ids_log_file = "tmp/ids_#{time_str}.txt"
 
-log_files = Dir['tmp/*.log']
+log_files = Dir['tmp/perf_*.log']
 metrics = Parser.new.parse_log_files(log_files)
 summary = Summary.new(metrics)
 

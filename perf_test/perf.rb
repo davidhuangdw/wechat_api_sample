@@ -5,6 +5,7 @@ warming_skip_count = 10
 interval = 10.seconds
 
 host = 'http://srm-connector.ljiang.dev.cloud.vitrue.com'
+host = 'http://srm-connector.mzou.dev.cloud.vitrue.com'
 srm_conn = WechatSrmConnector.new(host)
 loop do
   result = srm_conn.push_msg

@@ -1,4 +1,5 @@
 require_relative 'basics'
+# http://mp.weixin.qq.com/wiki/0/56d992c605a97245eb7e617854b169fc.html
 
 class WechatApi
   def get_user_group(token, user_id)

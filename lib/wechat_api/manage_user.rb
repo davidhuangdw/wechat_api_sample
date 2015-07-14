@@ -1,4 +1,5 @@
 require_relative 'basics'
+# http://mp.weixin.qq.com/wiki/14/bb5031008f1494a59c6f71fa0f319c66.html
 
 class WechatApi
   def get_user_openids(token, next_openid=nil)

@@ -1,4 +1,5 @@
 require_relative 'basics'
+# http://mp.weixin.qq.com/wiki/13/43de8269be54a0a6f64413e4dfa94f39.html
 
 class WechatApi
   def create_menu(token, body_hash)

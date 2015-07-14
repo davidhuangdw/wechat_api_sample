@@ -1,5 +1,7 @@
 # encoding: utf-8
 require_relative '../lib/wechat_api'
+# http://mp.weixin.qq.com/wiki/5/963fc70b80dc75483a271298a76a8d59.html
+
 x = WechatApi.new
 
 def token

@@ -1,7 +1,7 @@
 # encoding: utf-8
 require_relative '../lib/wechat_api'
+# http://mp.weixin.qq.com/wiki/15/5380a4e6f02f2ffdc7981a8ed7a40753.html
 
-# sandbox: http://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
 app_id = 'wx896e08f0cac4122b'
 secret = '24402383f5917760adf6be3620b67761'
 
@@ -27,3 +27,6 @@ body_hash ={filter:{is_to_all: false,
             msgtype: 'mpnews'
 }
 p x.send_news_to_group(token, body_hash)
+
+### get auto_reply rules:
+p x.get_autoreply_info(token)

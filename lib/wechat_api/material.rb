@@ -1,4 +1,5 @@
 require_relative 'basics'
+# http://mp.weixin.qq.com/wiki/5/963fc70b80dc75483a271298a76a8d59.html
 
 class WechatApi
   def get_materials(token, body_hash)

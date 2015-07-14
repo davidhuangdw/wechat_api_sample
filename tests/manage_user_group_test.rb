@@ -1,5 +1,6 @@
 # encoding: utf-8
 require_relative '../lib/wechat_api'
+# http://mp.weixin.qq.com/wiki/0/56d992c605a97245eb7e617854b169fc.html
 
 # sandbox: http://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
 app_id = 'wx896e08f0cac4122b'

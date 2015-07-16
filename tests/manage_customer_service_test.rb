@@ -4,6 +4,9 @@ require_relative '../lib/wechat_api'
 
 app_id = 'wx896e08f0cac4122b'
 secret = '24402383f5917760adf6be3620b67761'
+app_id = 'wxd1de833ac6b6ebfe'
+secret = '7393cd3d6260e3fcde6fafb6bf6cea5e'
+
 
 x = WechatApi.new
 token = x.get_token(app_id, secret)['access_token']
